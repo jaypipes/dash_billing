@@ -20,7 +20,7 @@ def set_module_urls(sender, **kwargs):
 
 ## Items below are used to define what is placed in the sidebar navigation.
 
-MODULE_TITLE = "iFramer"
+MODULE_TITLE = "Nixon"
 LINKS = [
     {'url':'/syspanel/nixon/google', 'text':'Google', 'active_text': 'google'},
     # {'url':'http://google.com', 'text':'ffff'},
