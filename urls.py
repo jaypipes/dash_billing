@@ -11,6 +11,6 @@ SYSPANEL = r'^syspanel/nixon/%s$'
 DASH = r'^dash/nixon/%s$'
 
 
-urlpatterns = patterns('osdash_module_nixon.views',
+urlpatterns = patterns('nixon.views',
     url(SYSPANEL % 'google', 'google', name='os_dash_nixon_google'),
 )
