@@ -1,0 +1,28 @@
+{% extends 'nixon_base.html' %}
+
+
+{% block headerjs %}
+  <script type="text/javascript" charset="utf-8">    
+    $(function(){
+      
+      function pageY(elem) {
+        return elem.offsetParent ? (elem.offsetTop + pageY(elem.offsetParent)) : elem.offsetTop;
+      }
+      var buffer = 20; //scroll bar buffer
+      function resizeIframe() {
+        var height = document.documentElement.clientHeight;
+        height -= pageY(document.getElementById('ifm'))+ buffer ;
+        height = (height < 0) ? 0 : height;
+        document.getElementById('ifm').style.height = height + 'px';
+      }
+      document.getElementById('ifm').onload=resizeIframe;
+      window.onresize = resizeIframe;
+      
+    })
+    
+  </script>
+{% endblock %}
+
+{% block syspanel_main %}
+  <iframe id="ifm" class="body_frame" src="http://google.com/" width="100%"></iframe>
+{% endblock syspanel_main %}
