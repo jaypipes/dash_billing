@@ -8,6 +8,7 @@ Nixon should be used as a skeleton example for drop-in applications to add funct
 To make your app talk with OpenStack Dashboard, there are a few items you need to take care of in your __init__.py. To have links show up in your sidebar navigation you must customize the following items:
 
     MODULE_TITLE = "iFramer"
+    MODULE_TYPE = "syspanel" # use 'dash' for user dashboard
     LINKS = [
         {'url':'/syspanel/nixon/google', 'text':'Google', 'active_text': 'google'},
         # {'url':'http://google.com', 'text':'ffff'},
