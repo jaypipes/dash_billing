@@ -21,9 +21,9 @@ def set_module_urls(sender, **kwargs):
 ## Items below are used to define what is placed in the sidebar navigation.
 
 
-MODULE_TITLE = "Nixon"
+MODULE_TITLE = "Monitoring"
 MODULE_TYPE = "syspanel" # use 'dash' for user dashboard
 LINKS = [
-    {'url':'/syspanel/nixon/google', 'text':'Google', 'active_text': 'google'},
+    {'url':'/syspanel/nixon/munin', 'text':'Munin', 'active_text': 'munin'},
     # {'url':'http://google.com', 'text':'ffff'},
 ]

@@ -23,6 +23,6 @@ from django_openstack.dash.views import instances as dash_instances
 from openstackx.api import exceptions as api_exceptions
 
 @login_required
-def google(request):
-    return shortcuts.render_to_response('nixon_google.html', {
+def munin(request):
+    return shortcuts.render_to_response('nixon_munin.html', {
     }, context_instance=template.RequestContext(request))
