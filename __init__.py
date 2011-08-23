@@ -1,17 +1,17 @@
 from django.dispatch import *
 
-from django_openstack.signals import dash_apps_ping
-from django_openstack.signals import dash_apps_urls
+from django_openstack.signals import dash_modules_ping
+from django_openstack.signals import dash_modules_urls
 
 import urls
 
 
-@receiver(dash_apps_ping, dispatch_uid="fooooo")
+@receiver(dash_modules_ping, dispatch_uid="fooooo")
 def send_sidebar_nav(sender, **kwargs):
     return {'title': MODULE_TITLE, 'links': LINKS, 'type': MODULE_TYPE}
     
 
-@receiver(dash_apps_urls, dispatch_uid="fooooo")
+@receiver(dash_modules_urls, dispatch_uid="fooooo")
 def set_module_urls(sender, **kwargs):
     return urls
 
