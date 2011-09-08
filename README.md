@@ -1,4 +1,4 @@
-Billing Daemon For FreeCloud
+Billing Daemon and DashBoard plugin
 
 Install (Temporary)
 - Install Dashboard ( Same procedure as dashboard)
