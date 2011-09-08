@@ -8,7 +8,9 @@
 * Add flag to nova
   "--notification_driver=billing.billing_notifier"
 * Configure path in dash_billing/bin/nova-notification
-* add apps for dashbaord settings
+* add dash_billing.syspanel and dash_billing.dash for INSTALLED_APPS in dashbaord settings 
+* launch nova and Billingdashboard and dash_billing/bin/nova-notification
+
 
   % INSTALLED_APPS = (
   %    'dashboard',
@@ -23,5 +25,3 @@
   %    'dash_billing.syspanel', # <---
   %    'dash_billing.dash',  # <---
   %  )
-
-* launch nova and Billingdashboard and dash_billing/bin/nova-notification
