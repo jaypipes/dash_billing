@@ -11,16 +11,17 @@
 * add dash_billing.syspanel and dash_billing.dash for INSTALLED_APPS in dashbaord settings 
 * launch nova and Billingdashboard and dash_billing/bin/nova-notification
 
-    % INSTALLED_APPS = (
-    %    'dashboard',
-    %    'django.contrib.contenttypes',
-    %    'django.contrib.sessions',
-    %    'django.contrib.messages',
-    %    'django.contrib.staticfiles',
-    %    'django_openstack',
-    %    'django_openstack.templatetags',
-    %    'django.contrib.admin',
-    %    'mailer',
-    %    'dash_billing.syspanel', # <---
-    %    'dash_billing.dash',  # <---
-    %  )
+#Example Settings
+    INSTALLED_APPS = (
+       'dashboard',
+       'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.messages',
+        'django.contrib.staticfiles',
+        'django_openstack',
+        'django_openstack.templatetags',
+        'django.contrib.admin',
+        'mailer',
+        'dash_billing.syspanel', # <---
+        'dash_billing.dash',  # <---
+    )
