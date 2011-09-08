@@ -1,24 +1,26 @@
-## Nixon
-### Nixon was framed...
+Billing Daemon For FreeCloud
 
-Nixon is a django app/plugin/module written for OpenStack Dashboard. All it really does is allow you to include remote pages into the dashboard using iframes.
+Install (Temporary)
+- Install Dashboard ( Same procedure as dashboard)
+- git clone this project to the openstack-dashboard directory
+- Add path of the the project directory to the nova
+- Add flag to nova
+  "--notification_driver=billing.billing_notifier"
+- Configure path in dash_billing/bin/nova-notification
+- add apps for dashbaord settings
 
-Nixon should be used as a skeleton example for drop-in applications to add functionality to the OpenStack Dashboard without requiring you to delve into the depths of the OpenStack Dashboard itself.
+INSTALLED_APPS = (
+    'dashboard',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django_openstack',
+    'django_openstack.templatetags',
+    'django.contrib.admin',
+    'mailer',
+    'dash_billing.syspanel',  # <--- *
+    'dash_billing.dash',  # <--- *
+)
 
-To make your app talk with OpenStack Dashboard, there are a few items you need to take care of in your __init__.py. To have links show up in your sidebar navigation you must customize the following items:
-
-    MODULE_TITLE = "iFramer"
-    MODULE_TYPE = "syspanel" # use 'dash' for user dashboard
-    LINKS = [
-        {'url':'/syspanel/nixon/google', 'text':'Google', 'active_text': 'google'},
-        # {'url':'http://google.com', 'text':'ffff'},
-    ]
-
-To get your app running in OpenStack Dashboard you must also add the application to INSTALLED_APPS in settings.py.
-
-    INSTALLED_APPS = (
-        ...
-        'dashboard.nixon'
-        ...
-    )
-
+- launch nova and Billingdashboard and dash_billing/bin/nova-notification
