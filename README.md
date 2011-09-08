@@ -1,15 +1,16 @@
 Billing Daemon and DashBoard plugin
 
 Install (Temporary)
-- Install Dashboard ( Same procedure as dashboard)
-- git clone this project to the openstack-dashboard directory
-- Add path of the the project directory to the nova
-- Add flag to nova
-  "--notification_driver=billing.billing_notifier"
-- Configure path in dash_billing/bin/nova-notification
-- add apps for dashbaord settings
 
-INSTALLED_APPS = (
+* Install Dashboard ( Same procedure as dashboard)
+* git clone this project to the openstack-dashboard directory
+* Add path of the the project directory to the nova
+* Add flag to nova
+  "--notification_driver=billing.billing_notifier"
+* Configure path in dash_billing/bin/nova-notification
+* add apps for dashbaord settings
+
+```INSTALLED_APPS = (
     'dashboard',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -21,6 +22,6 @@ INSTALLED_APPS = (
     'mailer',
     'dash_billing.syspanel',  # <--- *
     'dash_billing.dash',  # <--- *
-)
+)```
 
-- launch nova and Billingdashboard and dash_billing/bin/nova-notification
+* launch nova and Billingdashboard and dash_billing/bin/nova-notification
