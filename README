@@ -1,0 +1,10 @@
+Billing Daemon For FreeCloud
+
+Install (Temporary)
+- Install Billing Dashboard ( Same procedure as dashboard)
+- Add nova path to billing/lib
+- Add flag to nova
+  "--notification_driver=billing.billing_notifier"
+- Configure path in lib/bin/nova-notification
+
+- launch nova and Billingdashboard and lib/bin/nova-notification
