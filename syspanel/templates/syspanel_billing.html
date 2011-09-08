@@ -1,0 +1,43 @@
+{% extends 'syspanel_base.html' %}
+
+{% block sidebar %}
+  {% with current_sidebar="billing" %}
+    {{block.super}}
+  {% endwith %}
+{% endblock %}
+
+{% block page_header %}
+  {% url syspanel_flavors as refresh_link %}
+  {# to make searchable false, just remove it from the include statement #}
+  {% include "_page_header.html" with title="Billing" refresh_link=refresh_link %}
+{% endblock page_header %}
+
+{% block syspanel_main %}
+
+<table class="wide">
+  <tr>
+    <th>ID</th>
+    <th>Tenant ID</th>
+    <th>Amount</th>
+    <th>Date</th>
+    <th>Memo</th>
+    <th>Actions</th>
+  </tr>
+  {% for record in account_record_list %}
+  <tr id="records" class="{% cycle 'odd' 'even' %}">
+      <td>{{record.id}}</td>
+      <td>{{record.tenant_id}}</td>
+      <td>{{record.amount}}</td>
+      <td>{{record.time}}</td>
+      <td>{{record.memo}}</td>
+      <td id="actions">
+        <ul>
+         <li class="form">{% include "_delete_account_record.html" with form=delete_form %}</li>
+        </ul>
+      </td>
+  </tr>
+  {% endfor %}
+</table>
+
+  <a id="billing_create_link" class="action_link large-rounded" href="{% url syspanel_billing_create %}">Create New Record </a>
+{% endblock %}
