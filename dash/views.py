@@ -37,6 +37,7 @@ from django_openstack import forms
 from django_openstack import utils
 from django.db.models.aggregates import Sum
 from django_openstack.models import AccountRecord
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import openstack.compute.servers
 import openstackx.api.exceptions as api_exceptions
 
@@ -47,8 +48,19 @@ LOG = logging.getLogger('django_openstack.dash')
 def index(request):
     tenant_id = request.user.tenant
     account_record_list = AccountRecord.objects.filter(tenant_id=tenant_id)
+    paginator = Paginator(account_record_list,30)
+    page = request.GET.get('page')
+    try:
+        records = paginator.page(page)
+    except TypeError:
+        # If page is not an integer, deliver first page.
+        records = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        records = paginator.page(paginator.num_pages)
+    print '%r' % records
     balance = AccountRecord.objects.filter(tenant_id=tenant_id).aggregate(Sum('amount'))
     return shortcuts.render_to_response('dash_billing.html', 
-    {'account_record_list':account_record_list,'balance':balance['amount__sum']}, context_instance=template.RequestContext(request))
+    {'account_record_list':records,'balance':balance['amount__sum']}, context_instance=template.RequestContext(request))
 
 

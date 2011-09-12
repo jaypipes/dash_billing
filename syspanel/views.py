@@ -37,6 +37,7 @@ from django_openstack import forms
 from django_openstack import utils
 from django_openstack.models import AccountRecord
 from django_openstack.decorators import enforce_admin_access
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 import openstack.compute.servers
 import openstackx.api.exceptions as api_exceptions
@@ -80,18 +81,27 @@ class DeleteAccountRecord(forms.SelfHandlingForm):
 @login_required
 @enforce_admin_access
 def index(request):
-    print "piyo: billing index"
     for f in (DeleteAccountRecord,):
         _, handled = f.maybe_handle(request)
         if handled:
             return handled
-    print "############################"
     delete_form = DeleteAccountRecord()
-    print "request.user.service_catalog %s" % request.user.service_catalog
 
     account_record_list = AccountRecord.objects.all()
+
+    paginator = Paginator(account_record_list,30)
+    page = request.GET.get('page')
+    try:
+        records = paginator.page(page)
+    except TypeError:
+        # If page is not an integer, deliver first page.
+        records = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        records = paginator.page(paginator.num_pages)
+
     return shortcuts.render_to_response('syspanel_billing.html', 
-    {'account_record_list':account_record_list, 'delete_form': delete_form}, context_instance=template.RequestContext(request))
+    {'account_record_list':records, 'delete_form': delete_form}, context_instance=template.RequestContext(request))
 
 @login_required
 @enforce_admin_access
