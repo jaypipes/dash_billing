@@ -36,7 +36,9 @@ from django_openstack import api
 from django_openstack import forms
 from django_openstack import utils
 from django.db.models.aggregates import Sum
-from django_openstack.models import AccountRecord
+
+from dash_billing.syspanel.models import  AccountRecord
+
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import openstack.compute.servers
 import openstackx.api.exceptions as api_exceptions
@@ -58,7 +60,6 @@ def index(request):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         records = paginator.page(paginator.num_pages)
-    print '%r' % records
     balance = AccountRecord.objects.filter(tenant_id=tenant_id).aggregate(Sum('amount'))
     return shortcuts.render_to_response('dash_billing.html', 
     {'account_record_list':records,'balance':balance['amount__sum']}, context_instance=template.RequestContext(request))

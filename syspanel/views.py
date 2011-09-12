@@ -35,7 +35,7 @@ from django.utils.translation import ugettext as _
 from django_openstack import api
 from django_openstack import forms
 from django_openstack import utils
-from django_openstack.models import AccountRecord
+from models import AccountRecord
 from django_openstack.decorators import enforce_admin_access
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
