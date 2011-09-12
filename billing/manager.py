@@ -33,10 +33,11 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'dashboard.settings'
 from django.core.management import execute_manager
 from django_openstack import api
 from django_openstack.middleware.keystone import User
-from django_openstack.models import AccountRecord
+
 from django.db.models.aggregates import Sum
 
 from openstackx.api import exceptions as api_exceptions
+from dash_billing.syspanel.models import  AccountRecord
 
 from nova import db
 from nova import flags
