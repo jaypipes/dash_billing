@@ -29,17 +29,17 @@ import os
 import sys
 
 #TODO (nati) This is temporary for debugging
-BASE_PATH = '/home/nova/keystone/'
+BASE_PATH = '/opt/'
 NOVA_PATH = BASE_PATH + 'nova/'
 FLAG_FILE = NOVA_PATH + 'bin/nova.conf'
-BILLING = BASE_PATH + 'billing/'
+DASH = BASE_PATH + 'dash/'
 
 sys.path += [
     NOVA_PATH,
-    BILLING + 'openstack-dashboard/dash_billing/',
-    BILLING + 'openstack-dashboard/',
-    BILLING + 'openstack-dashboard/dashboard/',
-    BILLING + 'django-openstack/'
+    DASH + 'openstack-dashboard/dash_billing/',
+    DASH + 'openstack-dashboard/',
+    DASH + 'openstack-dashboard/dashboard/',
+    DASH + 'django-openstack/'
 ]
 
 gettext.install('nova', unicode=1)

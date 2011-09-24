@@ -1,4 +1,4 @@
-{% extends 'syspanel_base.html' %}
+{% extends 'django_openstack/syspanel/base.html' %}
 
 {% block sidebar %}
   {% with current_sidebar="billing" %}
@@ -9,7 +9,7 @@
 {% block page_header %}
   {% url syspanel_flavors as refresh_link %}
   {# to make searchable false, just remove it from the include statement #}
-  {% include "_page_header.html" with title="Billing" refresh_link=refresh_link %}
+  {% include "django_openstack/common/_page_header.html" with title="Billing" refresh_link=refresh_link %}
 {% endblock page_header %}
 
 {% block syspanel_main %}

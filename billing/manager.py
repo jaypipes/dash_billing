@@ -50,8 +50,8 @@ from nova.scheduler import zone_manager
 
 LOG = logging.getLogger('django_openstack.cron')
 
-TOKEN = 99988877766
-TENANT = 'admin'
+#TODO fix this later(nati)
+TENANT = '1'
 USER = 'admin'
 PASSWORD = 'secrete'
 

@@ -48,7 +48,8 @@ LOG = logging.getLogger('django_openstack.dash')
 
 @login_required
 def index(request):
-    tenant_id = request.user.tenant
+    tenant_id = request.session['tenant_id']
+    print '%r' % tenant_id
     account_record_list = AccountRecord.objects.filter(tenant_id=tenant_id)
     paginator = Paginator(account_record_list,30)
     page = request.GET.get('page')
