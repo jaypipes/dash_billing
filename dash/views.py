@@ -50,7 +50,7 @@ LOG = logging.getLogger('django_openstack.dash')
 def index(request):
     tenant_id = request.session['tenant_id']
     print '%r' % tenant_id
-    account_record_list = AccountRecord.objects.filter(tenant_id=tenant_id)
+    account_record_list = AccountRecord.objects.filter(tenant_id=tenant_id).order_by('time').reverse()
     paginator = Paginator(account_record_list,30)
     page = request.GET.get('page')
     try:

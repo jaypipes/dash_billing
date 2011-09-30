@@ -87,7 +87,7 @@ def index(request):
             return handled
     delete_form = DeleteAccountRecord()
 
-    account_record_list = AccountRecord.objects.all()
+    account_record_list = AccountRecord.objects.order_by('time').reverse()
 
     paginator = Paginator(account_record_list,30)
     page = request.GET.get('page')
