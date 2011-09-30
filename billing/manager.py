@@ -101,10 +101,10 @@ class BillingManager(manager.Manager):
             balance = AccountRecord.objects.filter(tenant_id=tenant.id).aggregate(Sum('amount'))['amount__sum']
             if not balance:
                 balance = 0
-            api.admin_api(self.request).quota_sets.update(tenant.id,instances=int(balance/PriceList.CREATE_INSTANCE))
+            api.admin_api(self.request).quota_sets.update(tenant.id, instances=-int(balance/PriceList.CREATE_INSTANCE))
 
     def _add_record(self, tenant_id, amount, memo):
-        accountRecord = AccountRecord(tenant_id=tenant_id,amount=amount,memo=memo)
+        accountRecord = AccountRecord(tenant_id=tenant_id, amount=amount, memo=memo)
         accountRecord.save()
 
     def compute_instance_create(self, message):
