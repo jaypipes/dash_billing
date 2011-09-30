@@ -29,7 +29,7 @@ import os
 import sys
 
 #TODO (nati) This is temporary for debugging
-BASE_PATH = '/opt/'
+BASE_PATH = '/opt/stack/'
 NOVA_PATH = BASE_PATH + 'nova/'
 FLAG_FILE = NOVA_PATH + 'bin/nova.conf'
 DASH = BASE_PATH + 'dash/'

@@ -95,18 +95,13 @@ class BillingManager(manager.Manager):
 
     def _check_tenant_bill(self):
         tenants = api.tenant_list(self.request)
-        #TODO (nati) This code is very slow. FIX this later 
+        LOG.debug("Checking tenant bill")
+        #TODO (nati) This code is slow. FIX this later 
         for tenant in tenants:
-            print 'tenant %s %s' % (tenant.id,tenant.description)
-            print '%r' % dir(tenant)
-            description = tenant.description if tenant.description else '   '
             balance = AccountRecord.objects.filter(tenant_id=tenant.id).aggregate(Sum('amount'))['amount__sum']
-            if balance > 0:
-                print 'OK tenant.id %s %s' % (tenant.id,balance)
-                api.tenant_update(self.request,tenant.id,description,True)
-            else:
-                print 'NG tenant.id %s %s' % (tenant.id,balance)
-                api.tenant_update(self.request,tenant.id,description,False)
+            if not balance:
+                balance = 0
+            api.admin_api(self.request).quota_sets.update(tenant.id,instances=int(balance/PriceList.CREATE_INSTANCE))
 
     def _add_record(self, tenant_id, amount, memo):
         accountRecord = AccountRecord(tenant_id=tenant_id,amount=amount,memo=memo)
