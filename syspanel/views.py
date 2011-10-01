@@ -106,9 +106,12 @@ def index(request):
     return shortcuts.render_to_response('syspanel_billing.html', 
     {'account_record_list':records, 'delete_form': delete_form}, context_instance=template.RequestContext(request))
 
-def eventlog(request):
-    eventlog_list = EventLog.objects.order_by('created').reverse()
-    paginator = Paginator(eventlog_list,30)
+def eventlog(request,request_id=None):
+    if request_id:
+        eventlog_list = EventLog.objects.filter(request_id=request_id).order_by('created').reverse()
+    else:
+        eventlog_list = EventLog.objects.order_by('created').reverse()
+    paginator = Paginator(eventlog_list,100)
     page = request.GET.get('page')
     try:
         records = paginator.page(page)
@@ -122,7 +125,7 @@ def eventlog(request):
 
     for obj in records.object_list:
         obj.message = pprint.pformat(json.loads(obj.message))
-        print obj.message
+
     return shortcuts.render_to_response('syspanel_eventlog.html', 
     {'eventlog_list':records}, context_instance=template.RequestContext(request))
 

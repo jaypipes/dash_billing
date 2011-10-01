@@ -11,6 +11,7 @@ urlpatterns = patterns('dash_billing.syspanel.views',
     url(r'^syspanel/billing/$', 'index', name='syspanel_billing'),
     url(r'^syspanel/billing/create/$', 'create', name='syspanel_billing_create'),
     url(r'^syspanel/billing/eventlog/$', 'eventlog', name='syspanel_eventlog'),
+    url(r'^syspanel/billing/eventlog/(?P<request_id>[^/]+)$', 'eventlog',name='syspanel_eventlog_by_request_id'),
 )
 
 urlpatterns += patterns(

@@ -14,9 +14,6 @@
 
 {% block syspanel_main %}
 
-<script charset='utf-8' src='{{ STATIC_URL }}../billing/static/jsonreport.js' type='text/javascript'></script>
-
-
 <table class="wide">
   <tr>
     <th>ID</th>
@@ -26,7 +23,6 @@
     <th>Tenant ID</th>
     <th>User ID</th>
     <th>Request ID</th>
-    <th>Message ID</th>
     <th>Message</th>
     <th>Created</th>
   </tr>
@@ -38,9 +34,8 @@
       <td>{{record.event_type}}</td>
       <td>{{record.tenant_id}}</td>
       <td>{{record.user_id}}</td>
-      <td><img alt='{{record.request_id}}' src='http://identicon.relucks.org/{{record.request_id}}?size=24'/></td>
-      <td><img alt='{{record.message_id}}' src='http://identicon.relucks.org/{{record.message_id}}?size=24'/></td>
-      <td><pre style='font-size:12px;'>{{record.message|linebreaksbr}}</pre></td>
+      <td><a href="{% url syspanel_eventlog_by_request_id request_id=record.request_id %}"><img alt='{{record.request_id}}' src='http://identicon.relucks.org/{{record.request_id}}?size=24'/>Show Related</a></td>
+      <td><a href="javascript:(function(){$('#record_{{record.id}}').toggle();})()" >Detail</a><pre id="record_{{record.id}}" style='display:none;font-size:12px;'>{{record.message|linebreaksbr}}</pre></td>
       <td>{{record.created}}</td>
   </tr>
   {% endfor %}
