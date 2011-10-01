@@ -33,7 +33,4 @@ def notify(message):
     priority = message.get('priority',
                            FLAGS.default_notification_level)
     priority = priority.lower()
-    logger = logging.getLogger(
-            'billing.notification.%s' % message['event_type'])
-    getattr(logger, priority)(json.dumps(message))
     rpc.cast(context, FLAGS.notification_topic, {'method':'notify','args':{'message':message}})

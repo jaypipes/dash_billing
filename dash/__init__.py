@@ -25,5 +25,6 @@ MODULE_TITLE = "Billing"
 MODULE_TYPE = "dash" # use 'dash' for user dashboard
 LINKS = [
     {'url':r'/dash/dash_billing/billing/', 'text':'Billing', 'active_text': 'Billing Pane'},
+    {'url':r'/dash/dash_billing/eventlog/', 'text':'EventLog', 'active_text': 'Event Log'},
     # {'url':'http://google.com', 'text':'ffff'},
 ]

@@ -23,6 +23,8 @@ Views for managing Nova instances.
 """
 import datetime
 import logging
+import pprint
+import json
 
 from django import http
 from django import shortcuts
@@ -38,6 +40,7 @@ from django_openstack import utils
 from django.db.models.aggregates import Sum
 
 from dash_billing.syspanel.models import  AccountRecord
+from dash_billing.syspanel.models import EventLog
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import openstack.compute.servers
@@ -64,5 +67,29 @@ def index(request):
     balance = AccountRecord.objects.filter(tenant_id=tenant_id).aggregate(Sum('amount'))
     return shortcuts.render_to_response('dash_billing.html', 
     {'account_record_list':records,'balance':balance['amount__sum']}, context_instance=template.RequestContext(request))
+
+def eventlog(request,request_id=None):
+    tenant_id = request.session['tenant_id']
+    if request_id:
+        eventlog_list = EventLog.objects.filter(request_id=request_id,tenant_id=tenant_id).order_by('created').reverse()
+    else:
+        eventlog_list = EventLog.objects.filter(tenant_id=tenant_id).order_by('created').reverse()
+    paginator = Paginator(eventlog_list,100)
+    page = request.GET.get('page')
+    try:
+        records = paginator.page(page)
+    except TypeError:
+        # If page is not an integer, deliver first page.
+        records = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        records = paginator.page(paginator.num_pages)
+
+
+    for obj in records.object_list:
+        obj.message = pprint.pformat(json.loads(obj.message))
+
+    return shortcuts.render_to_response('dash_eventlog.html',
+    {'eventlog_list':records}, context_instance=template.RequestContext(request))
 
 
