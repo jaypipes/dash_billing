@@ -25,5 +25,6 @@ SYSPANEL_MODULE_TITLE = "Billing Syspanel"
 SYSPANEL_MODULE_TYPE = "syspanel" # use 'dash' for user dashboard
 SYSPANEL_LINKS = [
     {'url':'/syspanel/billing/', 'text':'Billing', 'active_text': 'Billing Pane'},
+    {'url':'/syspanel/billing/eventlog/', 'text':'EventLog', 'active_text': 'Event Log'},
     # {'url':'http://google.com', 'text':'ffff'},
 ]

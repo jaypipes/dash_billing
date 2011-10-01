@@ -38,6 +38,7 @@ from django.db.models.aggregates import Sum
 
 from openstackx.api import exceptions as api_exceptions
 from dash_billing.syspanel.models import  AccountRecord
+from dash_billing.syspanel.models import EventLog
 
 from nova import db
 from nova import flags
@@ -112,8 +113,47 @@ class BillingManager(manager.Manager):
 
     def notify(self, message, context=None):
         event_type = message['event_type'].replace('.','_')
-        print event_type
         if hasattr(self,event_type):
             method = getattr(self,event_type)
             method(message)
         LOG.debug(json.dumps(message))
+        request_id = 0
+        tenant_id = 0
+        user_id = 0
+
+        try:
+            request_id = message['payload']['args'][1]['request_id']
+        except:
+            pass
+        #TODO fix notify decorator
+        try:
+            tenant_id = message['payload']['project_id']
+        except:
+            pass
+
+        try:
+            tenant_id = message['payload']['args'][1]['project_id']
+        except:
+            pass
+
+        try:
+            user_id = message['payload']['user_id']
+        except:
+            pass
+
+        try:
+            user_id = message['payload']['args'][1]['user_id']
+        except:
+            pass
+
+
+        eventlog = EventLog(event_type=message['event_type'],
+                            priority=message['priority'],
+                            message_id=message['message_id'],
+                            publisher_id=message['publisher_id'],
+                            message=json.dumps(message['payload']),
+                            request_id=request_id,
+                            user_id=user_id,
+                            tenant_id=tenant_id
+                            )
+        eventlog.save()

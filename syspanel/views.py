@@ -23,6 +23,8 @@ Views for managing Nova instances.
 """
 import datetime
 import logging
+import json
+import pprint
 
 from django import http
 from django import shortcuts
@@ -36,6 +38,7 @@ from django_openstack import api
 from django_openstack import forms
 from django_openstack import utils
 from models import AccountRecord
+from models import EventLog
 from django_openstack.decorators import enforce_admin_access
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -102,6 +105,26 @@ def index(request):
 
     return shortcuts.render_to_response('syspanel_billing.html', 
     {'account_record_list':records, 'delete_form': delete_form}, context_instance=template.RequestContext(request))
+
+def eventlog(request):
+    eventlog_list = EventLog.objects.order_by('created').reverse()
+    paginator = Paginator(eventlog_list,30)
+    page = request.GET.get('page')
+    try:
+        records = paginator.page(page)
+    except TypeError:
+        # If page is not an integer, deliver first page.
+        records = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        records = paginator.page(paginator.num_pages)
+
+
+    for obj in records.object_list:
+        obj.message = pprint.pformat(json.loads(obj.message))
+        print obj.message
+    return shortcuts.render_to_response('syspanel_eventlog.html', 
+    {'eventlog_list':records}, context_instance=template.RequestContext(request))
 
 @login_required
 @enforce_admin_access
