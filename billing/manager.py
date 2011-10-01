@@ -122,7 +122,7 @@ class BillingManager(manager.Manager):
         user_id = 0
 
         try:
-            request_id = message['payload']['args'][1]['request_id']
+            request_id = message['payload']['context']['request_id']
         except:
             pass
         #TODO fix notify decorator
@@ -132,7 +132,7 @@ class BillingManager(manager.Manager):
             pass
 
         try:
-            tenant_id = message['payload']['args'][1]['project_id']
+            tenant_id = message['payload']['context']['project_id']
         except:
             pass
 
@@ -142,10 +142,9 @@ class BillingManager(manager.Manager):
             pass
 
         try:
-            user_id = message['payload']['args'][1]['user_id']
+            user_id = message['payload']['context']['user_id']
         except:
             pass
-
 
         eventlog = EventLog(event_type=message['event_type'],
                             priority=message['priority'],
