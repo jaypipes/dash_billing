@@ -7,14 +7,7 @@
 {% endblock %}
 
 {% block page_header %}
-  <div id='page_header'>
-    <h2>Event Log</h2>
-    {% block breadcrumbs %}
-    {% endblock %}
-      <div class="right">
-        <a class="refresh" style="margin-bottom:20px;" title="Refresh" href="?{{query}}&page={{eventlog_list.number}}">Refresh List</a>
-      </div>
-  </div>
+{% include "_billing_page_header.html" with title="Event Log" page_number=eventlog_list.number %}
 {% endblock page_header %}
 
 {% block dash_main %}

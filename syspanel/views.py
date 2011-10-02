@@ -104,7 +104,11 @@ def index(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         records = paginator.page(paginator.num_pages)
 
-    return shortcuts.render_to_response('syspanel_billing.html', 
+    template_file = 'syspanel_billing.html'
+    if request.GET.get('refresh',False):
+        template_file = '_billing.html'
+
+    return shortcuts.render_to_response(template_file,
     {'account_record_list':records, 'delete_form': delete_form}, context_instance=template.RequestContext(request))
 
 def eventlog(request):

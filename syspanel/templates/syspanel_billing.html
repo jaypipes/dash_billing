@@ -7,52 +7,75 @@
 {% endblock %}
 
 {% block page_header %}
-  {% url syspanel_flavors as refresh_link %}
-  {# to make searchable false, just remove it from the include statement #}
-  {% include "django_openstack/common/_page_header.html" with title="Billing" refresh_link=refresh_link %}
+{% include "_billing_page_header.html" with title="Billing" page_number=account_record_list.number %}
 {% endblock page_header %}
 
 {% block syspanel_main %}
+  {% if account_record_list.object_list  %}
+    {% include '_billing.html' %}
+  {% else %}
+    <div class="message_box info">
+      <h2>Info</h2>
+      <p>There are currently no account log. </p>
+    </div>
+  {% endif %}
 
-<table class="wide">
-  <tr>
-    <th>ID</th>
-    <th>Tenant ID</th>
-    <th>Amount</th>
-    <th>Date</th>
-    <th>Memo</th>
-    <th>Actions</th>
-  </tr>
-  {% for record in account_record_list.object_list  %}
-  <tr id="records" class="{% cycle 'odd' 'even' %}">
-      <td>{{record.id}}</td>
-      <td>{{record.tenant_id}}</td>
-      <td>{{record.amount}}</td>
-      <td>{{record.time}}</td>
-      <td>{{record.memo}}</td>
-      <td id="actions">
-        <ul>
-         <li class="form">{% include "_delete_account_record.html" with form=delete_form %}</li>
-        </ul>
-      </td>
-  </tr>
-  {% endfor %}
-</table>
+
 <div class="pagination">
     <span class="step-links">
         {% if account_record_list.has_previous %}
-            <a href="?page={{ account_record_list.previous_page_number }}">previous</a>
+            <a href="?{{query}}&page={{ account_record_list.previous_page_number }}">previous</a>
         {% endif %}
 
         <span class="current">
             Page {{ account_record_list.number }} of {{ account_record_list.paginator.num_pages }}.
         </span>
 
-        {% if account_record_list.has_next %}
-            <a href="?page={{ account_record_list.next_page_number }}">next</a>
+        {% if eventlog_list.has_next %}
+            <a href="?{{query}}&page={{ account_record_list.next_page_number }}">next</a>
         {% endif %}
     </span>
 </div>
-<br/>
-  <a id="billing_create_link" class="action_link large-rounded" href="{% url syspanel_billing_create %}">Create New Record </a>
 {% endblock %}
+
+{% block footer_js %}
+  <script type="text/javascript" charset="utf-8">
+    $(function(){
+      function loadInstances(){
+          if ($("#ajax_option_box").is(':checked')) {
+              $('.refresh').addClass("refreshing");
+              $('#billing').load('?{{query}}&page={{ account_record_list.number }}&refresh=1', function(){
+              $('.refresh').removeClass("refreshing");
+              });
+          }
+      }
+      setInterval(function(){
+        loadInstances();
+      }, 3000);
+
+      loadOptionsWidget();
+
+      $("a.refresh").click(function(e){
+        e.preventDefault()
+        loadInstances();
+      })
+
+      function loadOptionsWidget(){
+        checkbox = document.createElement("input");
+          cb = $(checkbox);
+          cb.attr('id', 'ajax_option_box');
+          cb.attr('class', 'refreshOption');
+          cb.attr('type', 'checkbox');
+        checkbox_label = document.createElement("label");
+          cbl = $(checkbox_label);
+          cbl.attr('class', 'refreshOption');
+          cbl.text('auto refresh');
+          cbl.attr('for', 'ajax_option_box');
+          $('.right').append(cb);
+          $('.right').append(cbl);
+      }
+    })
+  </script>
+{% endblock footer_js %}
+
+

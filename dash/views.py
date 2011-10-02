@@ -66,7 +66,12 @@ def index(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         records = paginator.page(paginator.num_pages)
     balance = AccountRecord.objects.filter(tenant_id=tenant_id).aggregate(Sum('amount'))
-    return shortcuts.render_to_response('dash_billing.html', 
+
+    template_file = 'dash_billing.html'
+    if request.GET.get('refresh',False):
+        template_file = '_dash_billing.html'
+
+    return shortcuts.render_to_response(template_file,
     {'account_record_list':records,'balance':balance['amount__sum']}, context_instance=template.RequestContext(request))
 
 def eventlog(request):

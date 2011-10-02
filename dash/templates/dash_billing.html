@@ -7,30 +7,21 @@
 {% endblock %}
 
 {% block page_header %}
-  {% url dash_billing request.user.tenant as refresh_link %}
-  {# to make searchable false, just remove it from the include statement #}
-  {% include "django_openstack/common/_page_header.html" with title="Billing" refresh_link=refresh_link %}
+  {% include "_billing_page_header.html" with title="Billing" page_number=account_record_list.number%}
 {% endblock page_header %}
 
 {% block dash_main %}
 Your blance of StackDoll is S${{balance}}. 
 
-<table class="wide">
-  <tr>
-    <th>ID</th>
-    <th>Amount</th>
-    <th>Date</th>
-    <th>Memo</th>
-  </tr>
-  {% for record in account_record_list.object_list %}
-  <tr id="records" class="{% cycle 'odd' 'even' %}">
-      <td>{{record.id}}</td>
-      <td>{{record.amount}}</td>
-      <td>{{record.time}}</td>
-      <td>{{record.memo}}</td>
-  </tr>
-  {% endfor %}
-</table>
+  {% if account_record_list.object_list  %}
+    {% include '_dash_billing.html' %}
+  {% else %}
+    <div class="message_box info">
+      <h2>Info</h2>
+      <p>There are currently no record in the account. </p>
+    </div>
+  {% endif %}
+
 
 <div class="pagination">
     <span class="step-links">
@@ -47,6 +38,46 @@ Your blance of StackDoll is S${{balance}}.
         {% endif %}
     </span>
 </div>
-
-
 {% endblock %}
+
+{% block footer_js %}
+  <script type="text/javascript" charset="utf-8">
+    $(function(){
+      function loadInstances(){
+          if ($("#ajax_option_box").is(':checked')) {
+              $('.refresh').addClass("refreshing");
+              $('#billing').load('?page={{ account_record_list.number }}&refresh=1', function(){
+              $('.refresh').removeClass("refreshing");
+              });
+          }
+      }
+      setInterval(function(){
+        loadInstances();
+      }, 3000);
+
+      loadOptionsWidget();
+
+      $("a.refresh").click(function(e){
+        e.preventDefault()
+        loadInstances();
+      })
+
+      function loadOptionsWidget(){
+        checkbox = document.createElement("input");
+          cb = $(checkbox);
+          cb.attr('id', 'ajax_option_box');
+          cb.attr('class', 'refreshOption');
+          cb.attr('type', 'checkbox');
+        checkbox_label = document.createElement("label");
+          cbl = $(checkbox_label);
+          cbl.attr('class', 'refreshOption');
+          cbl.text('auto refresh');
+          cbl.attr('for', 'ajax_option_box');
+          $('.right').append(cb);
+          $('.right').append(cbl);
+      }
+    })
+  </script>
+{% endblock footer_js %}
+
+
