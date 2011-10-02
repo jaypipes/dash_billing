@@ -25,6 +25,7 @@ import datetime
 import logging
 import pprint
 import json
+import urllib
 
 from django import http
 from django import shortcuts
@@ -68,12 +69,18 @@ def index(request):
     return shortcuts.render_to_response('dash_billing.html', 
     {'account_record_list':records,'balance':balance['amount__sum']}, context_instance=template.RequestContext(request))
 
-def eventlog(request,request_id=None):
+def eventlog(request):
     tenant_id = request.session['tenant_id']
+    eventlog_list = EventLog.objects.order_by('created').filter(tenant_id=tenant_id).reverse()
+
+    request_id = request.GET.get('request_id')
     if request_id:
-        eventlog_list = EventLog.objects.filter(request_id=request_id,tenant_id=tenant_id).order_by('created').reverse()
-    else:
-        eventlog_list = EventLog.objects.filter(tenant_id=tenant_id).order_by('created').reverse()
+        eventlog_list = eventlog_list.filter(request_id=request_id)
+
+    priority = request.GET.get('priority')
+    if priority:
+        eventlog_list = eventlog_list.filter(priority=priority)
+
     paginator = Paginator(eventlog_list,100)
     page = request.GET.get('page')
     try:
@@ -89,7 +96,14 @@ def eventlog(request,request_id=None):
     for obj in records.object_list:
         obj.message = pprint.pformat(json.loads(obj.message))
 
-    return shortcuts.render_to_response('dash_eventlog.html',
-    {'eventlog_list':records}, context_instance=template.RequestContext(request))
+    template_file = 'dash_eventlog.html'
+    if request.GET.get('refresh',False):
+        template_file = '_dash_eventlog.html'
+
+    query = '&'.join(['%s=%s' % (urllib.quote(key),urllib.quote(value[0]))
+        for key,value in request.GET.lists() if key != 'page' ])
+
+    return shortcuts.render_to_response(template_file,
+    {'eventlog_list':records,'query':query}, context_instance=template.RequestContext(request))
 
 

@@ -117,10 +117,10 @@ class BillingManager(manager.Manager):
             method = getattr(self,event_type)
             method(message)
         LOG.debug(json.dumps(message))
-        request_id = 0
-        tenant_id = 0
-        user_id = 0
 
+	tenant_id = 0
+        user_id = 0
+        request_id = 0
         try:
             request_id = message['payload']['context']['request_id']
         except:
@@ -145,7 +145,13 @@ class BillingManager(manager.Manager):
             user_id = message['payload']['context']['user_id']
         except:
             pass
+   	
+	if not tenant_id:
+		tenant_id = 0
 
+	if not user_id:
+		user_id = 0
+ 
         eventlog = EventLog(event_type=message['event_type'],
                             priority=message['priority'],
                             message_id=message['message_id'],

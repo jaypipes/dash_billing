@@ -59,7 +59,7 @@ if __name__ == '__main__':
     flags.FLAGS(sys.argv)
     logging.setup()
     utils.monkey_patch()
-    server = service.Service.create(binary='nova-notification')
+    server = service.Service.create(binary='nova-notification',periodic_interval=600)
     service.serve(server)
     service.wait()
 
