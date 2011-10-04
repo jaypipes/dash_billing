@@ -86,7 +86,7 @@ def eventlog(request):
     if priority:
         eventlog_list = eventlog_list.filter(priority=priority)
 
-    paginator = Paginator(eventlog_list,100)
+    paginator = Paginator(eventlog_list,30)
     page = request.GET.get('page')
     try:
         records = paginator.page(page)
