@@ -69,7 +69,7 @@ def index(request):
 
     template_file = 'dash_billing.html'
     if request.GET.get('refresh',False):
-        template_file = '_dash_billing.html'
+        template_file = '_billing.html'
 
     return shortcuts.render_to_response(template_file,
     {'account_record_list':records,'balance':balance['amount__sum']}, context_instance=template.RequestContext(request))

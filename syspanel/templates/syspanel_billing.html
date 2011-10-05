@@ -21,7 +21,7 @@
   {% endif %}
 
 
-<div class="pagination">
+<div class="pagination" style="margin-bottom:20px;">
     <span class="step-links">
         {% if account_record_list.has_previous %}
             <a href="?{{query}}&page={{ account_record_list.previous_page_number }}">previous</a>
@@ -36,6 +36,9 @@
         {% endif %}
     </span>
 </div>
+
+<a id="billing_create_link" class="action_link large-rounded" href="{% url syspanel_billing_create %}">Create New Record </a>
+
 {% endblock %}
 
 {% block footer_js %}

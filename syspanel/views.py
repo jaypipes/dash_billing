@@ -49,18 +49,15 @@ import openstackx.api.exceptions as api_exceptions
 LOG = logging.getLogger('django_openstack.dash')
 
 class CreateAccountRecord(forms.SelfHandlingForm):
-    tenant_id = forms.CharField(max_length="100", label="Tenant ID")
+    tenant_id = forms.ChoiceField(label="Tenant")
     amount = forms.DecimalField(label="Amount")
     memo = forms.CharField(max_length="300", label="Memo")
 
-    def handle(self, request, data):
-        accountRecord = AccountRecord(tenant_id=data['tenant_id'],amount=int(data['amount']),memo=data['memo'])
-        accountRecord.save()
-        msg = '%s was successfully added to .' % data['tenant_id']
-        LOG.info(msg)
-        messages.success(request, msg)
-        return shortcuts.redirect('syspanel_billing')
-
+    def __init__(self, *args, **kwargs):
+        tenant_list = kwargs.pop('tenant_list', None)
+        super(CreateAccountRecord, self).__init__(*args, **kwargs)
+        self.fields['tenant_id'].choices = [[tenant.id, tenant.name]
+                for tenant in tenant_list]
 
 class DeleteAccountRecord(forms.SelfHandlingForm):
     id = forms.CharField(required=True)
@@ -150,10 +147,41 @@ def eventlog(request):
 @login_required
 @enforce_admin_access
 def create(request):
-    form, handled = CreateAccountRecord.maybe_handle(request)
-    if handled:
-        return handled
-    return shortcuts.render_to_response('syspanel_create_account.html',{
-        'form': form,
-    }, context_instance = template.RequestContext(request))
+    try:
+        tenants = api.tenant_list(request)
+    except api_exceptions.ApiException, e:
+        messages.error(request, 'Unable to retrieve tenant list: %s' %
+                                 e.message)
+        return redirect('syspanel_billing')
 
+    if request.method == "POST":
+        form = CreateAccountRecord(request.POST, tenant_list=tenants)
+        if form.is_valid():
+            data = form.clean()
+            # TODO Make this a real request
+            try:
+                accountRecord = AccountRecord(tenant_id=data['tenant_id'],amount=int(data['amount']),memo=data['memo'])
+                accountRecord.save()
+                msg = '%s was successfully added to .' % data['tenant_id']
+                LOG.info(msg)
+                messages.success(request, msg)
+                return shortcuts.redirect('syspanel_billing')
+
+            except api_exceptions.ApiException, e:
+                LOG.exception('ApiException while creating a record\n'
+                          '%r' % data)
+                messages.error(request,
+                                 'Error creating record: %s' % e.message)
+                return shortcuts.redirect('syspanel_billing')
+        else:
+            return shortcuts.render_to_response(
+            'syspanel_create_account.html', {
+                'form': form,
+            }, context_instance=template.RequestContext(request))
+
+    else:
+        form = CreateAccountRecord(tenant_list=tenants)
+        return shortcuts.render_to_response(
+        'syspanel_create_account.html', {
+            'form': form,
+        }, context_instance=template.RequestContext(request))
