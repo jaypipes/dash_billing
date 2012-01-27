@@ -53,8 +53,8 @@ LOG = logging.getLogger('django_openstack.cron')
 
 #TODO fix this later(nati)
 TENANT = '1'
-USER = 'admin'
-PASSWORD = 'secrete'
+USER = os.environ['NOVA_USERNAME'] 
+PASSWORD = os.environ['NOVA_PASSWORD']
 
 class FakeRequest:
     def __init__(self,user):
