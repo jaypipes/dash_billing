@@ -1,4 +1,4 @@
-#!/opt/local/Library/Frameworks/Python.framework/Versions/2.7/Resources/Python.app/Contents/MacOS/Python
+#!/usr/bin/python
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
 
 # Copyright (c) 2010 Openstack, LLC.
@@ -28,31 +28,17 @@ import gettext
 import os
 import sys
 
-#TODO (nati) This is temporary for debugging
-BASE_PATH = '/opt/stack/'
-NOVA_PATH = BASE_PATH + 'nova/'
-FLAG_FILE = NOVA_PATH + 'bin/nova.conf'
-DASH = BASE_PATH + 'dash/'
-
-sys.path += [
-    NOVA_PATH,
-    DASH + 'openstack-dashboard/dash_billing/',
-    DASH + 'openstack-dashboard/',
-    DASH + 'openstack-dashboard/dashboard/',
-    DASH + 'django-openstack/'
-]
-
 gettext.install('nova', unicode=1)
 
 from nova import flags
 from nova import log as logging
 from nova import service
 from nova import utils
-from billing import manager
+from dash_billing.billing import manager
 
 flags.DEFINE_string('notification_manager',
-                    'billing.manager.BillingManager',
-                    'billing manager')
+                    'dash_billing.billing.manager.BillingManager',
+                    'dash_billing.billing manager')
 
 if __name__ == '__main__':
     utils.default_flagfile(FLAG_FILE)
