@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: dash-billing
+Version: 0.0.1dev
+Summary: Dash billing plugin for horizon(diablo)
+Home-page: https://github.com/ntt-pf-lab/dash_billing
+Author: Nachi Ueno
+Author-email: ueno.nachi@lab.ntt.co.jp
+License: Apache License
+Description: - billing middleware for horizon(diablo)
+Platform: UNKNOWN

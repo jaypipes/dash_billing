@@ -1,0 +1,9 @@
+setup.cfg
+setup.py
+bin/nova-notification
+dash_billing.egg-info/PKG-INFO
+dash_billing.egg-info/SOURCES.txt
+dash_billing.egg-info/dependency_links.txt
+dash_billing.egg-info/entry_points.txt
+dash_billing.egg-info/top_level.txt
+dash_billing.egg-info/zip-safe
