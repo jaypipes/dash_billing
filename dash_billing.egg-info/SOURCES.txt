@@ -15,6 +15,7 @@ dash_billing/dash/__init__.py
 dash_billing/dash/tests.py
 dash_billing/dash/urls.py
 dash_billing/dash/views.py
+dash_billing/dash/templates/__init__.py
 dash_billing/syspanel/__init__.py
 dash_billing/syspanel/models.py
 dash_billing/syspanel/tests.py
