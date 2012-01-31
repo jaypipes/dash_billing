@@ -80,7 +80,7 @@ class BillingManager(manager.Manager):
 
     def periodic_tasks(self, context=None):
         self._add_record_for_active_instance()
-        self._check_tenant_bill()
+        self._check_tenant_all_bill()
 
     def _add_record_for_active_instance(self):
         now =  datetime.now()
@@ -94,19 +94,23 @@ class BillingManager(manager.Manager):
             if instance.status == 'ACTIVE':
                 self._add_record(instance.attrs.tenant_id, PriceList.ACTIVE_INSTANCE, 'instance %s is running at %s' % (instance.id,now))
 
-    def _check_tenant_bill(self):
+    def _check_tenant_all_bill(self):
         tenants = api.tenant_list(self.request)
         LOG.debug("Checking tenant bill")
         #TODO (nati) This code is slow. FIX this later 
         for tenant in tenants:
-            balance = AccountRecord.objects.filter(tenant_id=tenant.id).aggregate(Sum('amount'))['amount__sum']
-            if not balance:
-                balance = 0
-            api.admin_api(self.request).quota_sets.update(tenant.id, instances=-int(balance/PriceList.CREATE_INSTANCE))
+           self._check_tenant_bill(tenant.id)
+   
+    def _check_tenant_bill(self,tenant_id):
+	balance = AccountRecord.objects.filter(tenant_id=tenant_id).aggregate(Sum('amount'))['amount__sum']
+        if not balance:
+            balance = 0
+        api.admin_api(self.request).quota_sets.update(tenant_id, instances=-int(balance/PriceList.CREATE_INSTANCE))
 
     def _add_record(self, tenant_id, amount, memo):
         accountRecord = AccountRecord(tenant_id=tenant_id, amount=amount, memo=memo)
         accountRecord.save()
+        self._check_tenant_bill(tenant_id)
 
     def compute_instance_create(self, message):
         self._add_record(message['payload']['project_id'], PriceList.CREATE_INSTANCE, 'create instance')
