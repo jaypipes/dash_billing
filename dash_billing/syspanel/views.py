@@ -26,6 +26,9 @@ import logging
 import json
 import pprint
 import urllib
+import string
+from random import choice
+
 
 from django import http
 from django import shortcuts
@@ -78,6 +81,10 @@ class DeleteAccountRecord(forms.SelfHandlingForm):
                                      e.message)
         return shortcuts.redirect(request.build_absolute_uri())
 
+class CreateNewUserWithBill(forms.SelfHandlingForm):
+   id = forms.CharField(required=True)
+   password = forms.CharField(required=True)
+   amount = forms.DecimalField(label="Amount")
 
 @login_required
 @enforce_admin_access
@@ -185,3 +192,78 @@ def create(request):
         'syspanel_create_account.html', {
             'form': form,
         }, context_instance=template.RequestContext(request))
+
+  
+def create_user_with_bill(request):
+    if request.method == "POST":
+        form = CreateNewUserWithBill(request.POST)
+        if form.is_valid():
+            data = form.clean()
+            # TODO Make this a real request
+	    try:
+               	LOG.info('Creating tenant with name "%s"' % data['id'])
+               	new_tenant = api.tenant_create(request,
+			data['id'],
+			"Tenant",
+	               	True)
+		messages.success(request,
+			'tenant %s was successfully created.'
+			% data['id'])
+
+                LOG.info('Creating user with name "%s"' % data['id'])
+                new_user = api.user_create(request,
+                                           data['id'],
+                                           data['id'] + "@dammyemail",
+                                           data['password'],
+                                           new_tenant.id,
+                                           True)
+                messages.success(request,
+                                 'User "%s" was successfully created.'
+                                 % data['id'])
+                try:
+                    api.role_add_for_tenant_user(
+                        request, new_tenant.id, new_user.id,
+                        settings.OPENSTACK_KEYSTONE_DEFAULT_ROLE)
+                except api_exceptions.ApiException, e:
+                    LOG.exception('ApiException while assigning\
+                                   role to new user: %s' % new_user.id)
+                    messages.error(request, 'Error assigning role to user: %s'
+                                             % e.message)
+
+                accountRecord = AccountRecord(tenant_id=new_tenant.id,amount=int(data['amount']),memo="Initial addtion")
+                accountRecord.save()
+                msg = '%s was successfully added to %s.' % (data['amount'], new_tenant.id)
+                LOG.info(msg)
+                messages.success(request, msg)
+                msg = """
+	        Please send following messege to the user:
+                Your freecloud account is succesfully created.
+                Url:https://www.thefreecloud.org
+                Username: %s
+                Password:%s
+                Manual is here:(URL)
+                Your inisial stack doller: %s
+                """ % ( data['id'],data['password'],data['amount'])
+                messages.success(request,msg)
+                return shortcuts.redirect('syspanel_create_user_with_bill')
+            
+            except api_exceptions.ApiException, e:
+                LOG.exception('ApiException while creating a record\n'
+                          '%r' % data)
+                messages.error(request,
+                                 'Error creating record: %s' % e.message)
+                return shortcuts.redirect('syspanel_billing')
+        else:
+            return shortcuts.render_to_response(
+            'syspanel_create_account.html', {
+                'form': form,
+            }, context_instance=template.RequestContext(request))
+
+    else:
+        password = "".join([choice(string.ascii_lowercase + string.digits) for i in range(8)])
+        form = CreateNewUserWithBill(initial={'password': password,'amount':1000})
+        return shortcuts.render_to_response(
+        'syspanel_create_user_with_bill.html', {
+            'form': form,
+        }, context_instance=template.RequestContext(request))
+ 
